@@ -14,7 +14,6 @@ terraform {
 }
 
 provider "aws" {
-  profile = "default"
   region  = "us-east-1"
 }
 
@@ -23,11 +22,11 @@ resource "aws_launch_configuration" "apache-server-2" {
   name = "apache-server-2"
   image_id        = "ami-007855ac798b5175e"
   instance_type   = "t2.micro"
+  key_name        = var.key_name
   security_groups = [aws_security_group.general-sg.id]
   lifecycle {
     create_before_destroy = true
   }
-  key_name               = var.key_name
   user_data              = <<-EOF
                 #!/bin/bash
                 sudo apt-get update
@@ -38,21 +37,14 @@ resource "aws_launch_configuration" "apache-server-2" {
 }
 
 resource "aws_launch_configuration" "nginx-server-2" {
-  name = "nginx-server"
+  name = "nginx-server-2"
   image_id        = "ami-007855ac798b5175e"
   instance_type   = "t2.micro"
   security_groups = [aws_security_group.general-sg.id]
   lifecycle {
     create_before_destroy = true
   }
-  key_name               = var.key_name
-  user_data              = <<-EOF
-                #!/bin/bash
-                sudo apt-get update
-                sudo apt-get install nginx -y
-                sudo systemctl start nginx
-                sudo systemctl enable nginx
-                EOF
+  user_data              = file("./text.sh")
 }
 
 
@@ -126,12 +118,6 @@ resource "aws_security_group" "general-sg" {
       self             = false
       to_port          = 80
   }]
-}
-
-resource "aws_launch  " "apache-server" {
-  target_group_arn = aws_lb_target_group.terraform-load-balance.arn
-  target_id        = aws_launch_configuration.nginx-server-2.id
-  port             = 80
 }
 
 #Autoscaling group
