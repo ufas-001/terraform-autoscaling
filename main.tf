@@ -27,7 +27,6 @@ resource "aws_launch_configuration" "apache-server-2" {
   lifecycle {
     create_before_destroy = true
   }
-  key_name               = var.key_name
   user_data              = <<-EOF
                 #!/bin/bash
                 sudo apt-get update
@@ -45,7 +44,6 @@ resource "aws_launch_configuration" "nginx-server-2" {
   lifecycle {
     create_before_destroy = true
   }
-  key_name               = var.key_name
   user_data              = file("./text.sh")
 }
 
