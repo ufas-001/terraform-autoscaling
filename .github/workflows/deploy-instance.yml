@@ -1,1 +1,29 @@
+name: Autoscaling CI
+
+on:
+  push:
+    branches:
+      - "features"
+  pull_request:
+    branches:
+      - "main"
+      - "develop"
+
+env:
+  AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+  AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+  AWS_REGION: us-east-1
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+      - name: Install Terraform
+        uses: hashicorp/setup-terraform@v1
+        with:
+          terraform_version: 1.0.9
+      - name: Format Terraform code
+        run: terraform fmt -check -diff -recursive
 
