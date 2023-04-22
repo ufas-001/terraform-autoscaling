@@ -26,3 +26,4 @@ jobs:
           terraform_version: 1.0.9
       - name: Format Terraform code
         run: terraform fmt -check -diff -recursive
+        working-directory: ./
