@@ -24,3 +24,21 @@ jobs:
         uses: hashicorp/setup-terraform@v1
         with:
           terraform_version: 1.0.9
+  plan:
+    needs: lint
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/features'
+    steps:
+      - name: Code Checkout
+        uses: actions/checkout@v2
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v1
+      - name: Terraform init
+        run: terraform init
+
+      - name: Terraform plan
+        run: |
+          terraform plan \
+          -out=tf.plan
