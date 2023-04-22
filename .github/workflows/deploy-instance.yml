@@ -24,6 +24,7 @@ jobs:
         uses: hashicorp/setup-terraform@v1
         with:
           terraform_version: 1.0.9
+
   plan:
     needs: lint
     runs-on: ubuntu-latest
@@ -40,4 +41,41 @@ jobs:
       - name: Terraform plan
         run: |
           terraform plan \
+          -out=tf.
+
+  apply:
+    needs: lint
+    runs-on: ubuntu-latest
+    if: |
+      github.ref == 'main' &&
+      github.event.pull_request.merged == true
+    steps:
+      - name: Code Checkout
+        uses: actions/checkout@v2
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v1
+      - name: Terraform init
+        run: terraform init
+      - name: Terraform Apply
+        run: |
+          terraform apply \
+          -auto-approve \
+          
+  destroy:
+    runs-on: ubuntu-latest
+    if: |
+      github.ref == 'feature-b' &&
+      github.event.pull_request.merged == true
+    steps:
+      - name: Code Checkout
+        uses: actions/checkout@v2
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v1
+      - name: Terraform init
+        run: terraform init
+      - name: Terraform plan
+        run: |
+          terraform plan \
           -out=tf.plan
+      - name: Terraform Destroy
+        run: terraform destroy -auto-approve
