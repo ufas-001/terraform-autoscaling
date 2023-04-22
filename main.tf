@@ -127,20 +127,4 @@ resource "aws_autoscaling_group" "terraform-load-balance" {
   max_size           = 1
   min_size           = 1
   launch_configuration = aws_launch_configuration.nginx-server-2.name
-  instance_refresh {
-    strategy = "Rolling"
-    preferences {
-      min_healthy_percentage = 60
-    }
-    triggers = ["tag"]
-  }
-}
-data "aws_ami" "terraform-load-balance" {
-  most_recent = true
-  owners      = ["amazon"]
-
-  filter {
-    name   = "name"
-    values = ["amzn-ami-hvm-*-x86_64-gp2"]
-  }
 }
