@@ -23,6 +23,7 @@ resource "aws_launch_configuration" "apache-server-2" {
   name = "apache-server-2"
   image_id        = "ami-007855ac798b5175e"
   instance_type   = "t2.micro"
+  key_name        = var.key_name
   security_groups = [aws_security_group.general-sg.id]
   lifecycle {
     create_before_destroy = true
